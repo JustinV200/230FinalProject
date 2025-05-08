@@ -1,0 +1,14 @@
+name: "230FinalWebsite"
+title: "My Website"
+description: |
+  My Website
+output_dir: "docs"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "Part 2"
+      href: pT2.html
+    - text: "Part 3"
+      href: pT3.html
+output: distill::distill_article

@@ -1,0 +1,1 @@
+{"frames":[],"message":"Error in ggplot(spotify, aes(x = genre, y = popularity, fill = genre)) : \n  could not find function \"ggplot\"\n"}

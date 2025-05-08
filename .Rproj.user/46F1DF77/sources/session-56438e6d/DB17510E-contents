@@ -1,0 +1,204 @@
+---
+title: "The Sound of Data"
+description: |
+  What makes music genres popular?
+site: distill::distill_website
+output:
+  distill::distill_article:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(ggplot2)
+library(readr)
+library(plotly)
+library(reshape2)
+library(RColorBrewer)
+```
+
+```{r load-data}
+spotify = read_csv("spotify_story_dataset.csv")
+
+# Clean up genre labels
+spotify$genre = tolower(trimws(gsub("’", "'", spotify$genre)))  
+
+# Make it so children's music stops repeating
+
+spotify$genre[spotify$genre == "children's music"] = "children"
+
+# Create palette
+genre_levels = unique(spotify$genre)
+my_palette = setNames(colorRampPalette(brewer.pal(8, "Set2"))(length(genre_levels)), genre_levels)
+```
+## 🎧 What Makes a Hit?
+
+*Music surrounds us, but why do some songs top the charts while others disappear? This project explores what characteristics help songs climb the popularity ladder, using a dataset of tracks from various genres. We'll blend data with design to uncover the patterns behind the plays. All visualizations in this story use a customized extension of the Set2 color palette from RColorBrewer to provide vibrant, distinguishable hues across musical genres.*
+
+## 📘 Variable Defintions
+
+Here are the core audio features used throughout this data story, defined for clarity and context.
+
+- **Popularity**  
+  A value from 0 to 100 assigned by Spotify, based on how often a track is played.
+
+- **Genre**  
+  The musical category of a track (e.g. pop, rock, jazz, classical).
+
+- **Danceability**  
+  How suitable a track is for dancing, based on tempo, beat strength, and rhythm stability (0 to 1).
+
+- **Energy**  
+  Measures intensity and activity. Higher values indicate loud, fast, and dynamic tracks (0 to 1).
+
+- **Valence**  
+  Describes the emotional positivity of a song. High = happy/cheerful, low = sad/angry (0 to 1).
+
+- **Tempo**  
+  The speed of a track in beats per minute (BPM).
+
+- **Acousticness**  
+  Likelihood that a track is acoustic. Higher values mean more acoustic sound (0 to 1).
+
+- **Duration**  
+  The length of the track in seconds.
+
+---
+
+## 🎵 Popularity by Genre
+
+```{r}
+genres = unique(spotify$genre)
+avg_pop = data.frame(
+  genre = genres,
+  popularity = sapply(genres, function(g) mean(spotify$popularity[spotify$genre == g], na.rm = TRUE))
+)
+
+ggplot(avg_pop, aes(x = reorder(genre, popularity), y = popularity)) +
+  geom_segment(aes(xend = genre, yend = 0), color = "gray") +
+  geom_point(color = "#e31a1c", size = 4) +
+  coord_flip() +
+  labs(title = "Average Popularity by Genre")
+```
+
+*A horizontal dot chart showing the average popularity of songs in each genre. Genres like pop and rap dominate the top ranks, while niche categories like opera or movie music are on the lower end.*
+
+---
+
+## 💃 Popularity vs Danceability
+
+```{r}
+ggplot(spotify, aes(x = danceability, y = popularity, color = genre)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = my_palette) +
+  labs(title = "Popularity vs Danceability", x = "Danceability", y = "Popularity")
+```
+
+*A scatterplot mapping how danceability correlates with popularity. While there is wide variability, we see a concentration of high-popularity songs clustering around 0.5-0.75 danceability. This suggests that rhythm and groove are important for success.*
+
+---
+
+## 😊 Popularity vs Valence
+
+```{r}
+ggplot(spotify, aes(x = valence, y = popularity, color = genre)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = my_palette) +
+  labs(title = "Popularity vs Valence", x = "Valence (Positivity)", y = "Popularity")
+```
+
+*This chart explores whether emotional positivity (valence) makes a song more popular. While some upbeat songs (high valence) do well, overall there's no strong correlation. This implies that both happy and sad songs can succeed, depending more on genre and context.*
+
+---
+
+## 🕺 Danceability by Genre
+
+```{r}
+ggplot(spotify, aes(x = genre, y = danceability, fill = genre)) +
+  geom_violin() +
+  scale_fill_manual(values = my_palette) +
+  labs(title = "Danceability by Genre", x = "Genre", y = "Danceability") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+*A violin plot showing how danceability varies across genres. Genres like dance, hip-hop, and pop have high, tightly clustered values, while classical and opera are notably lower. This visualization reinforces how rhythm-heavy genres emphasize movement.*
+
+---
+
+## ⏱️ Duration vs Popularity
+
+```{r}
+ggplot(spotify, aes(x = duration_ms / 1000, y = popularity, color = genre)) +
+  geom_point(alpha = 0.5) +
+  scale_color_manual(values = my_palette) +
+  labs(title = "Duration vs Popularity", x = "Duration (seconds)")
+```
+*A scatterplot measuring song length (in seconds) against popularity. Surprisingly, duration has little to no consistent relationship with popularity. Both long and short tracks show a wide range in plays, suggesting length  doesn’t predict success*
+
+---
+
+## 📊 Interactive: Valence vs Popularity
+
+```{r}
+plot_ly(
+  type = "scatter", mode = "markers",
+  x = spotify$valence,
+  y = spotify$popularity,
+  color = spotify$genre,
+  marker = list(size = 10, opacity = 0.6)
+) %>%
+  layout(title = "Interactive Plot: Valence vs Popularity")
+
+```
+*A dynamic plot where users can hover to explore valence and popularity across genres. The tool helps reveal genre-specific clusters and offers a hands-on view of how emotional tone varies in mainstream music.*
+
+---
+
+## 🔥 Interactive Correlation Heatmap
+
+```{r}
+cor_data <- cor(spotify[, c("popularity", "acousticness", "danceability", "energy", "valence", "tempo")])
+melted_cor <- melt(cor_data)
+
+plot_ly(
+  type = "heatmap",
+  x = melted_cor$Var1,
+  y = melted_cor$Var2,
+  z = melted_cor$value,
+  colorscale = list(c(0, 'red'), c(0.5, 'white'), c(1, 'green')),
+  reversescale = FALSE
+) %>%
+  layout(
+    title = "Interactive Correlation Heatmap",
+    xaxis = list(title = ""),
+    yaxis = list(title = "")
+  )
+
+```
+*This heatmap shows how different audio features correlate with each other and with popularity. The strongest positive correlations are with danceability and energy, while interestingly, acousticness shows a slight negative trend.*
+
+---
+
+## ✅ So, What makes music popular?
+
+```{r}
+# Compute correlations with popularity
+cor_matrix = cor(spotify[, c("popularity", "acousticness", "danceability", "energy", "valence", "tempo")])
+pop_cor = cor_matrix["popularity", ]
+pop_cor = sort(pop_cor[-1], decreasing = TRUE)  # remove self-correlation
+
+# Create a data frame
+cor_df = data.frame(
+  variable = names(pop_cor),
+  correlation = as.numeric(pop_cor)
+)
+
+# Bar chart of influence
+ggplot(cor_df, aes(x = reorder(variable, correlation), y = correlation)) +
+  geom_col(fill = "#1f78b4") +
+  coord_flip() +
+  labs(title = "Most Influential Features on Popularity",
+       x = "Feature",
+       y = "Correlation with Popularity") +
+  theme_minimal()
+```
+*A final bar chart ranking which musical traits most correlate with popularity. Danceability and energy rise to the top. Reinforcing the idea that high-energy, rhythm-forward tracks are more likely to succeed in today’s music economy. While acousticness seems to be in less demand, with a strong negative correlation.*

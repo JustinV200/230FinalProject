@@ -1,0 +1,90 @@
+---
+title: "Justin Verlin Math 230: Exhibit Preview"
+output:
+  distill::distill_article:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(ggplot2)
+library(readr)
+library(RColorBrewer)
+```
+
+```{r load-data}
+spotify = read_csv("spotify_story_dataset.csv")
+spotify$genre = tolower(trimws(gsub("’", "'", spotify$genre)))
+spotify$genre[spotify$genre == "children's music"] = "children"
+genre_levels = unique(spotify$genre)
+my_palette = setNames(colorRampPalette(brewer.pal(8, "Set2"))(length(genre_levels)), genre_levels)
+```
+
+## 🎨 Welcome to the Virtual Exhibit
+
+*This scrollstory offers a first glimpse into my MATH 230 gallery, where code meets creativity. From abstract generative art to music analytics, this exhibit blends logic, visuals, and storytelling into one digital experience.*
+
+---
+
+## 🖌️ Part 2: Data as Art
+
+*The first half of this project explores creative and statistical visualizations built throughout the semester. From randomized generative art to curated plots using NFL and biometric data, these pieces showcase the versatility of data as a visual medium.*
+
+- **Ink Chaos** and **Fractal Smoke** use mathematical randomness and the `aRtsy` package to simulate digital brush strokes.
+- In **Seasonal Shifts**, NFL preseason wins are turned into a fluid bump chart.
+- **Biometric Density & Motor Curve** creatively compares student and car metrics using layered ggplot extensions.
+- An interactive dashboard rounds out the collection, offering real-time sampling distributions for hands-on exploration.
+
+
+## 🌈 My Color Pallete
+```{r}
+# Preview of color palette
+palette_df = data.frame(x = 1:length(my_palette), color = names(my_palette))
+ggplot(palette_df, aes(x = x, y = 1, fill = color)) +
+  geom_tile() +
+  scale_fill_manual(values = my_palette) +
+  theme_void() +
+  theme(legend.position = "none") +
+  labs(title = "RColorBrewer - Set2(custom)")
+```
+
+---
+
+## 🎧 Part 3: The Music Behind the Metrics
+
+*The second half is a deep dive into Spotify data: a colorful and rhythmic narrative about what drives song popularity. Each plot is created using a consistent color palette and designed to reveal what patterns makes music popular.*
+
+```{r}
+avg_pop = data.frame(
+  genre = genre_levels,
+  popularity = sapply(genre_levels, function(g) mean(spotify$popularity[spotify$genre == g], na.rm = TRUE))
+)
+
+ggplot(avg_pop, aes(x = reorder(genre, popularity), y = popularity, fill = genre)) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = my_palette) +
+  coord_flip() +
+  labs(title = "Average Popularity by Genre",
+       x = "Genre",
+       y = "Average Popularity") +
+  theme_minimal()
+```
+
+
+---
+
+## 🎟️ Explore the Full Gallery
+
+*Ready to dive deeper into the patterns and visual expression? Visit both parts of my final project below:*
+
+- 🖼️ [Part 2 – Past Visualizations Gallery](pT2.html): Explore generative art, statistical design, and interactive dashboards created throughout the semester.
+- 🎧 [Part 3 – Data Story: What Makes Music Popular](pT3.html): See how musical features like energy and valence shape what we listen to most.
+
+
+---
+
+## 👤 About Me
+
+My name is **Justin Verlin**, I'm originally from Annandale, New Jersey and I’m a Computer Science Engineering major with a Data Science double major at Bucknell University. I’m also an Eagle Scout and enjoy camping, skiing, programming, playing guitar, fishing, and exploring data. I hope you enjoy my website.
+
+Thanks for visiting!

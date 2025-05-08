@@ -1,0 +1,7 @@
+"0","ggplot(spotify, aes(x = genre, y = popularity, fill = genre)) +"
+"0","  geom_boxplot() +"
+"0","  scale_fill_manual(values = my_palette) +"
+"0","  labs(title = ""Popularity by Genre"", x = ""Genre"", y = ""Popularity"")"
+"2","Error in ggplot(spotify, aes(x = genre, y = popularity, fill = genre)) : 
+  could not find function ""ggplot""
+"

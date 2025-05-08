@@ -1,0 +1,39 @@
+/* styles.css */
+
+body {
+  background-color: #f9f9f9;
+  font-family: "Helvetica Neue", sans-serif;
+  color: #222;
+}
+
+h1, h2, h3 {
+  color: #1f78b4;
+  font-weight: 600;
+}
+
+a {
+  color: #e31a1c;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.distill-article {
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.plot-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+code {
+  background-color: #eee;
+  padding: 2px 4px;
+  border-radius: 4px;
+}

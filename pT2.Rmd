@@ -1,0 +1,149 @@
+---
+title: "Digital Gallery: Data as Art"
+description: "A curated journey through generative algorithms and statistical storytelling"
+output:
+  distill::distill_article:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(aRtsy)
+library(Lock5Data)
+library(dplyr)
+library(ggplot2)
+library(ggbump)
+library(knitr)
+library(gghalves)
+library(patchwork)
+library(hexbin)
+```
+
+## 🖌️ Generative Artwork Collection
+
+*This collection explores data creativity using aRtsy. Each piece is born from mathematical randomness.*
+
+```{r}
+set.seed(230)
+canvas_strokes(colors = c("black", "white"))
+```
+
+**_Ink Chaos_**  
+*A minimalist experiment in contrast, exploring digital brush strokes.*
+
+```{r}
+set.seed(1)
+canvas_collatz(colors = colorPalette("tuscany1"), background = "lightgrey")
+```
+
+**_Collatz Bloom_**  
+*This piece visualizes the famous Collatz sequence with earthy tones, evoking recursive structure.*
+
+```{r}
+set.seed(89293)
+canvas_smoke(colors =c("darkblue", "darkorange"), algorithm = c("minimum", "average"), resolution = 240)
+```
+
+**_Fractal Smoke_**  
+*A dance of color and computation, this work blends randomness with form via the "smoke algorithm."*
+
+---
+
+## 📊 GGPlot Extensions Project
+
+```{r}
+NFL_2014 = Lock5Data::NFLPreSeason2014
+
+team_levels = c("BLT", "BUF", "CHI", "CIN", "CLV", "DET", "GB","MIN",
+                 "NE", "NYG", "NYJ", "PHI", "PIT", "WAS", "IND","MIA",
+                 "ATL", "CAR", "DAL", "HST", "JAX", "NO", "TB", "TEN",
+                 "ARZ", "DEN", "KC", "OAK", "SD", "SEA", "SF", "SL")
+
+NFL_2014$Region = cut(
+  match(NFL_2014$Team, team_levels),
+  breaks = c(0, 8, 16, 24, 32),
+  labels = c("North", "East", "South", "West")
+)
+
+df2 = NFL_2014 %>%
+  group_by(Season, Region) %>%
+  summarise(Wins = sum(Preseason), .groups = "drop") %>%
+  group_by(Season) %>%
+  mutate(preSeasonRank = rank(-Wins, ties.method = "random")) %>%
+  filter(preSeasonRank <= 8) %>%
+  ungroup()
+
+knitr::kable(head(df2))
+```
+
+```{r}
+ggplot(df2, aes(x = Season, y = preSeasonRank, group = Region, color = Region)) +
+  geom_bump(smooth = 6) +
+  geom_point(size = 2) +
+  labs(y = "Preseason rank", x = "Year") +
+  scale_x_continuous(limits = c(2010, 2013), breaks = seq(2010, 2013, 1)) +
+  scale_y_reverse() +
+  theme_minimal(base_family = "Arial") +
+  theme(
+    plot.background = element_rect(fill = "#0a192f", color = NA),
+    panel.background = element_rect(fill = "#f4f4f4"),
+    plot.title = element_text(color = "white", face = "bold", size = 14),
+    axis.title = element_text(color = "black"),
+    legend.background = element_rect(fill = "white"),
+    legend.title = element_text(color = "black")
+  ) +
+  ggtitle("Rank of Region Based on Preseason Wins") +
+  scale_color_brewer(palette = "Dark2")
+```
+
+**_Seasonal Shifts_**  
+*A ranking of NFL regions by preseason wins between 2010–2013, captured as flowing motion.*
+
+---
+
+## 📊 Panorama
+
+*Two-part visualization blending student biometrics and vehicle performance.*
+
+```{r}
+data("mtcars")
+mtcars = mtcars[complete.cases(mtcars), ]
+mtcars$cyl = factor(mtcars$cyl, ordered = TRUE)
+mtcars$am = factor(mtcars$am, labels = c("automatic", "manual"))
+
+data(StudentSurvey)
+StudentSurvey = StudentSurvey[complete.cases(StudentSurvey), ]
+StudentSurvey$Year = factor(StudentSurvey$Year,
+                          levels = c("FirstYear", "Sophomore", "Junior", "Senior"),
+                          ordered = TRUE)
+
+p1 = ggplot(StudentSurvey, aes(Pulse, Height)) + 
+  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", contour = TRUE, h = c(5,5)) + 
+  scale_fill_distiller(palette = "Spectral") +
+  labs(title = "Pulse vs Height") +
+  theme_minimal()
+
+p2 = ggplot() +
+  geom_half_violin(data = mtcars,
+                   aes(x = cyl, y = hp, split = am, fill = am),
+                   position = "identity") +
+  labs(title = "Car Horsepower by Cylinders and Transmission Type",
+       x = "Number of Cylinders",
+       y = "Horsepower",
+       fill = "Transmission") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal()
+
+p1 + p2
+```
+
+**_Biometric Density & Motor Curve_**  
+*An artistic blend of human and mechanical data rendered side-by-side for contrast and balance.*
+
+---
+
+## 📈 Dashboard Display
+
+*An interactive exploration of sampling distributions.*
+
+<iframe src="https://abby-flynt.shinyapps.io/SamplingDistributions_Dashboard_Team4/" class="l-screen-inset shaded" height="1000px" width="100%"></iframe>
