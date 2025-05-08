@@ -85,6 +85,6 @@ ggplot(avg_pop, aes(x = reorder(genre, popularity), y = popularity, fill = genre
 
 ## 👤 About Me
 
-My name is **Justin Verlin**, I'm originally from Annandale, New Jersey and I’m a Computer Science Engineering major with a Data Science double major at Bucknell University. I’m also an Eagle Scout and enjoy camping, skiing, programming, playing guitar, fishing, and exploring data. I hope you enjoy my website.
+My name is **Justin Verlin**, I'm originally from Annandale, New Jersey and I’m a Computer Science Engineering major with a Data Science double major at Bucknell University. I’m also an Eagle Scout and enjoy camping, skiing, programming, playing guitar, cooking, fishing, and exploring data. I hope you enjoy my website.
 
 Thanks for visiting!

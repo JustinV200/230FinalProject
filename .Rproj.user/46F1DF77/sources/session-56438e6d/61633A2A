@@ -3,7 +3,7 @@
     "path": "C:/Schoolwork/MATH230/final/230FinalWebsite/index.Rmd",
     "project_path": "index.Rmd",
     "type": "r_markdown",
-    "hash": "2100746582",
+    "hash": "2051927374",
     "contents": "",
     "dirty": false,
     "created": 1745607437518.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "81,0",
+        "cursorPosition": "87,263",
         "scrollLine": "82",
         "last_setup_crc32": ""
     },
     "folds": "",
-    "lastKnownWriteTime": 1746725211,
+    "lastKnownWriteTime": 1746736297,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1746725211808,
+    "last_content_update": 1746736297829,
     "read_only": false,
     "read_only_alternatives": []
 }
