@@ -1,1 +1,1 @@
-Math 230: Data Visualization final project.
+Math 230: Data Visualization final project. Website containing highlighted visualizations from the semester, an imbedded interactive dashboard explaining sampling distributions, and a data story focused on what makes music popular. 
