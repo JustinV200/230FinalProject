@@ -1,1 +1,1 @@
-Math 230: Data Visualization final project. Website containing highlighted visualizations from the semester, an imbedded interactive dashboard explaining sampling distributions, and a data story focused on what makes music popular. 
+2025 Spring Semester website made in R for my Data Visualization class, includes an embedded interactive dashboard made with flexdashboard, a data story surrounding what makes music popular, and coursework from throughout the year
